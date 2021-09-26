@@ -1,0 +1,1 @@
+MongoDB Connection String mongodb+srv://root:<password>@mernproject.trvek.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
