@@ -1,0 +1,91 @@
+var express = require('express');
+var request = require('request');
+var router = express.Router();
+
+// import db
+var db = require('../db/conn');
+
+// import model
+var Employee = require('../models/employeeModel');
+
+// display
+router.get('/', function (req, res) {
+   Employee.find(function (err, data) {
+      res.render('../views/list', {
+         EmployeeList: data
+      });
+   });
+});
+
+//add form
+router.get('/addForm', function (req, res) {
+   res.render('../views/addForm');
+});
+
+//add
+router.post('/add', function (req, res) {
+   var newEmployee = new Employee({
+      "EmpName": req.body.txtName
+   });
+
+   newEmployee.save(function (err, data) {
+      if (!err)
+         res.redirect('/');
+      else
+         console.log(err._message);
+   });
+});
+
+//update form
+router.get('/updateForm/:id', function (req, res) {
+   Employee.findById(req.params.id, function (err, data) {
+      res.render('../views/updateForm', {
+         EmployeeList: data
+      });
+   });
+});
+
+//update
+router.post('/update', function (req, res) {
+   Employee.findByIdAndUpdate(req.body.id, { "EmpName": req.body.txtName }, function (err, data) {
+      res.redirect('/');
+   });
+});
+
+//delete
+router.get('/delete/:id', function (req, res) {
+   Employee.findByIdAndRemove(req.params.id, function (err, data) {
+      res.redirect('/');
+   });
+});
+
+
+// API
+
+router.get('/posts',function(req,res){
+   var options = {
+      'url':'https://jsonplaceholder.typicode.com/posts',
+      'method':'GET'
+   }
+  
+   request(options,function(err,res,body){
+      var data = JSON.parse(body);
+      console.log(data);
+   });
+});
+
+router.get('/updatepost',function(req,res){
+   var options = {
+      'url':'https://statusforever.gharkamart.in/EClasses/apiAllCategoryList.php',
+      'method':'POST',
+      'form':{"APISECRET":"6d5W6Hab-3fg3-414a-a192-be5Vwam11bf6"}
+   }
+
+   request(options,function(err,res,body){
+      var json = JSON.parse(body);
+      console.log(json);
+   });
+
+});
+
+module.exports = router;
